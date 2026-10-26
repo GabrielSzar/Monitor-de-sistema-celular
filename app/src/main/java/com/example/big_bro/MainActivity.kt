@@ -5,6 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -23,6 +24,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.big_bro.ui.theme.BigBroTheme
 import kotlinx.coroutines.android.awaitFrame
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.platform.LocalContext
+import kotlinx.coroutines.delay
+import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.Duration.Companion.seconds
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -32,17 +39,10 @@ class MainActivity : ComponentActivity() {
             BigBroTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     Column(
-                        modifier = Modifier
-                            .background(Color.Blue)
-                            .padding(16.dp)
+                        modifier = Modifier.padding(innerPadding)
                     ) {
-                        Greeting(
-                            name = "67naldo",
-                            modifier = Modifier.padding(innerPadding)
-                        )
-                        Contador(
-                            modifier = Modifier
-                                .background(Color.Red)
+                        TelaBateria(
+                            Modifier.border(2.dp,Color.Blue)
                                 .padding(16.dp)
                         )
                     }
@@ -54,31 +54,28 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
+fun TelaBateria(modifier: Modifier = Modifier) {
+    val contexto = LocalContext.current
+    var dados by remember { mutableStateOf<DadosBateria?>(null) }
 
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    BigBroTheme {
-        Greeting("Android")
+    LaunchedEffect(Unit) {
+        while (true) {
+            dados = lerBateria(contexto)
+            delay(1.seconds)
+        }
+
     }
-}
-
-@Composable
-fun Contador(modifier: Modifier = Modifier, textModifier: Modifier = Modifier) {
-    var contador by remember { mutableIntStateOf(0) }
-    Button(
-        onClick = { contador++ },
-        modifier = modifier
-    ) {
-        Text(
-            "Cliques: $contador",
-            modifier = textModifier
-        )
+    val d = dados
+    if (d == null) {
+        Text("Lendo Bateria...", modifier = modifier)
+    } else {
+        Column(modifier = modifier) {
+            Text("Bateria: ${d.porcentagem}%")
+            Text("Corrente: ${d.correnteMa} mA")
+            Text("Tensão: ${d.tensaoMv} mV")
+            Text("Temperatura: ${d.temperaturaC} ºC")
+            Text("Potencia: ${"%.2f".format(d.watts)}")
+            Text(if (d.plugado) "Plugado" else "Na bateria")
+        }
     }
 }
