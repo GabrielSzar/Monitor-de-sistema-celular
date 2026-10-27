@@ -1,34 +1,28 @@
 package com.example.big_bro
 
+import android.R
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.example.big_bro.ui.theme.BigBroTheme
-import kotlinx.coroutines.android.awaitFrame
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.platform.LocalContext
 import kotlinx.coroutines.delay
-import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
 
 class MainActivity : ComponentActivity() {
@@ -72,10 +66,10 @@ fun TelaBateria(modifier: Modifier = Modifier) {
         Column(modifier = modifier) {
             Text("Bateria: ${d.porcentagem}%")
             Text("Corrente: ${d.correnteMa} mA")
-            Text("Tensão: ${d.tensaoMv} mV")
-            Text("Temperatura: ${d.temperaturaC} ºC")
-            Text("Potencia: ${"%.2f".format(d.watts)}")
-            Text(if (d.plugado) "Plugado" else "Na bateria")
+            Text("Tensão: ${"%.2f".format(d.tensaoV)} Volts")
+            Text("Temperatura: ${d.temperaturaC} °C")
+            Text("Potencia: ${"%.2f".format(d.watts)} Watts")
+            Text(if (d.plugado) "Carregando" else "Desgarregando")
         }
     }
 }
